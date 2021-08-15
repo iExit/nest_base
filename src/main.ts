@@ -19,7 +19,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger-ui', app, document);
 
   /**
    * 使用log4js日志框架
@@ -29,5 +29,5 @@ async function bootstrap() {
   await app.listen(port);
 }
 bootstrap().then(() => {
-  logger.log(`listen in http://localhost:${port}`);
+  logger.log(`listen in http://localhost:${port}/swagger-ui`);
 });
