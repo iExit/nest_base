@@ -17,6 +17,14 @@ async function bootstrap() {
     .setTitle('nest基础框架')
     .setDescription('nest基础框架Api文档')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'jwt', // 该名称与@ApiBearerAuth装饰器同名
+    )
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger-ui', app, document);
