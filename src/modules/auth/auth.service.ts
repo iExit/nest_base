@@ -6,12 +6,15 @@ import { IResponse } from 'src/interface/response.interface';
 import { User } from 'src/interface/user.interface';
 import { UserService } from 'src/modules/user/user.service';
 import { encript } from 'src/utils/encription';
+const svgCaptcha = require('svg-captcha');
 
 const logger = new Logger('auth.service.ts');
 
 @Injectable()
 export class AuthService {
   private res: IResponse;
+  private pointer: number = 0;
+  private captchas = {};
   constructor(
     @InjectModel('USER_MODEL') private readonly userModel: Model<User>,
     private userService: UserService,
@@ -108,5 +111,30 @@ export class AuthService {
    */
   private async createToken(user: User) {
     return await this.jwtService.sign(user);
+  }
+
+  public async createCaptcha(id?: string) {
+    if (id !== '-1') {
+      delete this.captchas[id];
+      logger.log(`删除了id为${id}的验证码`);
+    }
+    const c = svgCaptcha.create();
+    this.captchas[this.pointer] = c.text;
+    this.res = {
+      code: 0,
+      msg: {
+        id: this.pointer++,
+        img: c.data,
+      },
+    };
+    return this.res;
+  }
+
+  public async verification(captcha: string, id: string) {
+    this.res =
+      this.captchas[id] === captcha.toLocaleLowerCase()
+        ? { code: 0, msg: '验证通过' }
+        : { code: 5, msg: '验证码错误' };
+    return this.res;
   }
 }
