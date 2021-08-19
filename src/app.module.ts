@@ -6,6 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { Log4jsModule } from '@nestx-log4js/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule, RedisModuleOptions } from 'nestjs-redis';
+import { ProjectModule } from './modules/project/project.module';
 
 const options: RedisModuleOptions = {
   name: 'nest_base',
@@ -20,6 +21,7 @@ const options: RedisModuleOptions = {
     Log4jsModule.forRoot(),
     AuthModule,
     RedisModule.register(options),
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
