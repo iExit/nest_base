@@ -7,7 +7,7 @@ import { UserService } from './user.service';
 
 @Controller('user')
 @ApiTags('用户模块')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth('jwt')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -15,6 +15,6 @@ export class UserController {
   @Get('hello')
   @Role('admin')
   async hello() {
-    return 'hello';
+    return this.userService.hello();
   }
 }
