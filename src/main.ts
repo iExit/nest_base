@@ -34,6 +34,11 @@ async function bootstrap() {
    */
   app.useLogger(app.get(Log4jsLogger));
 
+  /**
+   * 允许跨域
+   */
+  app.enableCors();
+
   await app.listen(port);
 }
 bootstrap().then(() => {
