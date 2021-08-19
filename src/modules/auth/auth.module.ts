@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { HashPasswordMiddleware } from 'src/middleware/hash-password.middleware';
 import { UserService } from 'src/modules/user/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -16,4 +17,12 @@ import { JwtStrategy } from './jwt.strategy';
   controllers: [AuthController],
   providers: [AuthService, UserService, JwtStrategy],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer
+      .apply(HashPasswordMiddleware)
+      .forRoutes('auth/register')
+      .apply(HashPasswordMiddleware)
+      .forRoutes('auth/alter');
+  }
+}

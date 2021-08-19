@@ -68,6 +68,18 @@ export class AuthService {
   }
 
   /**
+   * 用户修改
+   */
+  public async alter(user: User) {
+    const result: User = await this.userService.findOneByPhone(user.phone);
+    this.userModel.findOneAndUpdate({ phone: result.phone }, user, {}, () => {
+      logger.log(`用户${user.phone}修改密码成功`);
+    });
+    this.res = { code: 0, msg: '用户修改成功' };
+    return this.res;
+  }
+
+  /**
    * 用户验证
    */
   private async validateUser(user: User) {
