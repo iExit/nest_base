@@ -6,8 +6,8 @@ import { ProjectService } from './project.service';
 
 @Controller('project')
 @ApiTags('项目模块')
-@UseGuards(AuthGuard('jwt'))
-@ApiBearerAuth('jwt')
+// @UseGuards(AuthGuard('jwt'))
+// @ApiBearerAuth('jwt')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 

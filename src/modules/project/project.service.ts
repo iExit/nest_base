@@ -1,14 +1,14 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Project } from 'src/interface/project.interface';
-import { IResponse } from 'src/interface/response.interface';
-
-const logger = new Logger('project.service.ts');
 
 @Injectable()
 export class ProjectService {
-  private res: IResponse;
   constructor(
     @InjectModel('PROJECT_MODEL') private readonly projectModel: Model<Project>,
   ) {}
@@ -17,46 +17,55 @@ export class ProjectService {
    * 创建项目
    */
   public async create(project: Project) {
-    const createProject = new this.projectModel(project);
-    const data = await createProject.save();
-    return data;
+    try {
+      const createProject = new this.projectModel(project);
+      return await createProject.save();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   /**
-   * 创建项目
+   * 删除项目
    */
   public async deleteById(projectId: string) {
-    await this.projectModel.findByIdAndDelete(projectId);
-    return null;
+    try {
+      return await this.projectModel.findByIdAndDelete(projectId);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   /**
    * 修改项目
    */
   public async alterById(projectId: string, project: Project) {
-    const data = await this.projectModel.findByIdAndUpdate(projectId, project);
-    return data;
+    try {
+      return await this.projectModel.findByIdAndUpdate(projectId, project);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   /**
    * 查询项目
    */
   public async findById(projectId: string) {
-    const data = await this.projectModel.findById(projectId);
-    if (!data) {
-      throw new NotFoundException('找不到项目');
+    try {
+      return await this.projectModel.findById(projectId);
+    } catch (error) {
+      throw new NotFoundException();
     }
-    return data;
   }
 
   /**
    * 查询所有项目
    */
   public async findAll() {
-    const data = await this.projectModel.find();
-    if (!data) {
-      throw new NotFoundException('找不到项目');
+    try {
+      return await this.projectModel.find();
+    } catch (error) {
+      throw new NotFoundException();
     }
-    return data;
   }
 }
