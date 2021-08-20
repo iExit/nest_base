@@ -4,7 +4,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Log4jsLogger } from '@nestx-log4js/core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './interception/transform.interception';
-import { HttpExceptionFilter } from './filters/http-execption.filter';
+import { HttpExceptionFilter } from './filter/http-execption.filter';
+import { AnyExceptionFilter } from './filter/any-exception.filter';
 
 const port = 3000;
 const logger = new Logger('main.ts');
@@ -49,6 +50,7 @@ async function bootstrap() {
   /**
    * 全局异常过滤器
    */
+  app.useGlobalFilters(new AnyExceptionFilter());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(port);
