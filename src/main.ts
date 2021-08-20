@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Log4jsLogger } from '@nestx-log4js/core';
 import { AppModule } from './app.module';
+import { TransformInterceptor } from './interception/transform.interception';
+import { HttpExceptionFilter } from './filters/http-execption.filter';
 
 const port = 3000;
 const logger = new Logger('main.ts');
@@ -38,6 +40,16 @@ async function bootstrap() {
    * 允许跨域
    */
   app.enableCors();
+
+  /**
+   * 全局响应拦截器
+   */
+  app.useGlobalInterceptors(new TransformInterceptor());
+
+  /**
+   * 全局异常过滤器
+   */
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(port);
 }
