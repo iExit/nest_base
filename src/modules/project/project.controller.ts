@@ -42,4 +42,12 @@ export class ProjectController {
   public async find(@Param('id') projectId: string) {
     return await this.projectService.findById(projectId);
   }
+
+  @Get('find')
+  @ApiOperation({
+    summary: '查询全部',
+  })
+  public async findAll() {
+    return await this.projectService.findAll();
+  }
 }

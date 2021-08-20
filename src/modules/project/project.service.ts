@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Project } from 'src/interface/project.interface';
@@ -18,82 +18,45 @@ export class ProjectService {
    */
   public async create(project: Project) {
     const createProject = new this.projectModel(project);
-    try {
-      const data = await createProject.save();
-      this.res = {
-        code: 0,
-        msg: {
-          data: data._id,
-          msg: '项目创建成功',
-        },
-      };
-    } catch (error) {
-      logger.error(error);
-      this.res = {
-        code: 6,
-        msg: '项目创建失败',
-      };
-    }
-    return this.res;
+    const data = await createProject.save();
+    return data;
   }
 
   /**
    * 创建项目
    */
   public async deleteById(projectId: string) {
-    try {
-      await this.projectModel.findByIdAndDelete(projectId);
-      this.res = {
-        code: 0,
-        msg: '项目删除成功',
-      };
-    } catch (error) {
-      logger.error(error);
-      this.res = {
-        code: 6,
-        msg: '项目删除失败',
-      };
-    }
-    return this.res;
+    await this.projectModel.findByIdAndDelete(projectId);
+    return null;
   }
 
   /**
    * 修改项目
    */
   public async alterById(projectId: string, project: Project) {
-    try {
-      await this.projectModel.findByIdAndUpdate(projectId, project);
-      this.res = {
-        code: 0,
-        msg: '项目修改成功',
-      };
-    } catch (error) {
-      logger.error(error);
-      this.res = {
-        code: 6,
-        msg: '项目修改失败',
-      };
-    }
-    return this.res;
+    const data = await this.projectModel.findByIdAndUpdate(projectId, project);
+    return data;
   }
 
   /**
    * 查询项目
    */
   public async findById(projectId: string) {
-    try {
-      const data = await this.projectModel.findById(projectId);
-      this.res = {
-        code: 0,
-        msg: data,
-      };
-    } catch (error) {
-      logger.error(error);
-      this.res = {
-        code: 6,
-        msg: '项目查询失败',
-      };
+    const data = await this.projectModel.findById(projectId);
+    if (!data) {
+      throw new NotFoundException('找不到项目');
     }
-    return this.res;
+    return data;
+  }
+
+  /**
+   * 查询所有项目
+   */
+  public async findAll() {
+    const data = await this.projectModel.find();
+    if (!data) {
+      throw new NotFoundException('找不到项目');
+    }
+    return data;
   }
 }
